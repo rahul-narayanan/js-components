@@ -1,9 +1,8 @@
+/* $Id$ */
+
 export const SECOND = 1000;
-
 export const MINUTE = 60 * SECOND;
-
 export const HOUR = 60 * MINUTE;
-
 export const DAY = 24 * HOUR;
 
 const TimeFormats = [
@@ -58,7 +57,7 @@ export const months = {
 
 let defaultDateFormat = "dd/MM/yyyy";
 
-let userTimeZoneOffset = 0;
+let timeZoneOffset = 0;
 
 const appendZeroBefore = value => `${value < 10 ? "0" : ""}${value}`;
 
@@ -91,8 +90,8 @@ export class DateTimeUtil {
         defaultDateFormat = dateFormat;
     }
 
-    static setUserTimeZoneOffset(offset = 0) {
-        userTimeZoneOffset = offset;
+    static setTimeZoneOffset(offset = 0) {
+        timeZoneOffset = offset;
     }
 
     /**
@@ -105,11 +104,11 @@ export class DateTimeUtil {
         calculate difference between user timzone offset and browser timezone offset and
         add it to UTC time, the resulting timestamp is based on the User timzone. If passed in
         Date constructor, will give date, day, time in User timezone. */
-        return parseInt(timeInMillis) + (userTimeZoneOffset - BROWSER_TZ_OFFSET);
+        return parseInt(timeInMillis) + (timeZoneOffset - BROWSER_TZ_OFFSET);
     }
 
     static convertBrowserTZtoUserTZ(time) {
-        return parseInt(time) + BROWSER_TZ_OFFSET - userTimeZoneOffset;
+        return parseInt(time) + BROWSER_TZ_OFFSET - timeZoneOffset;
     }
 
     static replaceValues(dateObj, format, includeTime) {
@@ -262,7 +261,7 @@ export class DateTimeUtil {
     }
 
     static getUserCurrentTime() {
-        return Date.now() - BROWSER_TZ_OFFSET + userTimeZoneOffset;
+        return Date.now() - BROWSER_TZ_OFFSET + timeZoneOffset;
     }
 
     static getDurationSentence(hours, minutes, seconds) {
