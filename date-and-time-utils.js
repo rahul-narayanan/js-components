@@ -1,8 +1,9 @@
-/* $Id$ */
-
 export const SECOND = 1000;
+
 export const MINUTE = 60 * SECOND;
+
 export const HOUR = 60 * MINUTE;
+
 export const DAY = 24 * HOUR;
 
 const TimeFormats = [
@@ -55,9 +56,9 @@ export const months = {
     ]
 };
 
-const dateFormat = "dd/MM/yyyy";
+let defaultDateFormat = "dd/MM/yyyy";
 
-const userTimeZoneOffset = 0;
+let userTimeZoneOffset = 0;
 
 const appendZeroBefore = value => `${value < 10 ? "0" : ""}${value}`;
 
@@ -85,7 +86,15 @@ const decode = (text) => {
     return text;
 };
 
-export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
+export class DateTimeUtil {
+    static setDefaultDateFormat(dateFormat = defaultDateFormat) {
+        defaultDateFormat = dateFormat;
+    }
+
+    static setUserTimeZoneOffset(offset = 0) {
+        userTimeZoneOffset = offset;
+    }
+
     /**
      * Transform UTC timestamp to a timestamp based on user timezone.
      * @param timeInMillis UTC timestamp in Milliseconds.
@@ -142,13 +151,13 @@ export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
     }
 
     /* Converts time in millis to date format without any timezone conversions */
-    static convertTimeToDate(convertedTimeInMillis, format = dateFormat, includeTime) {
+    static convertTimeToDate(convertedTimeInMillis, format = defaultDateFormat, includeTime) {
         const dateObj = new Date(convertedTimeInMillis);
         return this.replaceValues(dateObj, format, includeTime);
     }
 
     /* Converts UTC timestamp to user"s date format */
-    static convertLongToDateFormat(timeInMillis = "", format = dateFormat) {
+    static convertLongToDateFormat(timeInMillis = "", format = defaultDateFormat) {
         if (!this.checkForValidTime(timeInMillis)) {
             return "";
         }
@@ -157,7 +166,7 @@ export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
     }
 
     /* Converts timestamp to user timezone timestamp and to user"s date format with time */
-    static convertLongToDateFormatWithTime(timeInMillis = "", format = dateFormat) {
+    static convertLongToDateFormatWithTime(timeInMillis = "", format = defaultDateFormat) {
         if (!this.checkForValidTime(timeInMillis)) {
             return "-";
         }
@@ -168,11 +177,11 @@ export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
     /* Converts current browser time to user"s timezone and return result in
         user"s date format with time
     */
-    static getCurrentDate(format = dateFormat, includeTime = false) {
+    static getCurrentDate(format = defaultDateFormat, includeTime = false) {
         return this.convertTimeToDate(this.getUserCurrentTime(), format, includeTime);
     }
 
-    static getCurrentDateWithTime(format = dateFormat, includeTime = true) {
+    static getCurrentDateWithTime(format = defaultDateFormat, includeTime = true) {
         return this.getCurrentDate(format, includeTime);
     }
 
@@ -248,7 +257,7 @@ export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
         return Math.ceil(timeDiff / (1000 * 3600 * 24));
     }
 
-    static getDateByDateFormat(dateObj, format = dateFormat) {
+    static getDateByDateFormat(dateObj, format = defaultDateFormat) {
         return this.replaceValues(dateObj, format);
     }
 
@@ -297,10 +306,10 @@ export const DateTimeUtil = class DateTimeUtil extends FrameworkDateTimeUtil {
         const m = Math.floor(d % 3600 / 60);
         const s = Math.floor(d % 3600 % 60);
 
-        const hDisplay = h > 0 ? h + (h === 1 ? ` hour ` : ` hours, `) : "";
-        const mDisplay = m > 0 ? m + (m === 1 ? ` minute ` : ` minutes, `) : "";
-        const sDisplay = s > 0 ? s + (s === 1 ? ` second ` : ` seconds `) : "";
+        const hDisplay = h > 0 ? h + (h === 1 ? " hour " : " hours, ") : "";
+        const mDisplay = m > 0 ? m + (m === 1 ? " minute " : " minutes, ") : "";
+        const sDisplay = s > 0 ? s + (s === 1 ? " second " : " seconds ") : "";
 
         return hDisplay + mDisplay + sDisplay;
     }
-};
+}
